@@ -2,6 +2,7 @@ const Koa = require('koa')
 const router = require('koa-router')({
     prefix: '/prefix'
 })
+const Boom = require('boom')
 const app = new Koa()
 
 // Koa 中间件以一种非常传统的方式级联起来，你可能会非常熟悉这种写法。
@@ -41,7 +42,7 @@ app.use((ctx, next) => {
 
 router
     .get('/', async(ctx, next) => {
-
+        ctx.body = Boom.badGateway('that is a bad gateway')
     })
     .put('/users', async(ctx, next) => {
         // total request parameters
@@ -85,21 +86,25 @@ router
         }
     )
 
-    // Router wildcard
-    // .get(/^\/app(.*)(?:\/|$)/, async(ctx, next) => {
-    //     ctx.body = 'wildcard regex body'
-    //     await next()
-    // })
+// Router wildcard
+// .get(/^\/app(.*)(?:\/|$)/, async(ctx, next) => {
+//     ctx.body = 'wildcard regex body'
+//     await next()
+// })
 
 // route.use(session(), authorize())
 
-app.on('error', (err, ctx) => {
-    console.error('server error', err, ctx)
-})
+// app.on('error', (err, ctx) => {
+//     console.error('server error', err, ctx)
+// })
 
 app
     .use(router.routes())
-    .use(router.allowedMethods())
+    .use(router.allowedMethods({
+        throw: true,
+        notImplemented: () => new Boom.notImplemented(),
+        methodNotAllowed: () => new Boom.methodNotAllowed()
+    }))
     .listen(3000, () => {
         console.log(`async-app has listening on port 3000`)
     })

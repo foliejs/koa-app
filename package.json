@@ -9,6 +9,7 @@
   "author": "JACK SUN",
   "license": "ISC",
   "dependencies": {
+    "boom": "^4.2.0",
     "koa": "^2.1.0",
     "koa-router": "next"
   }
