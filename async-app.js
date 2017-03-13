@@ -41,6 +41,11 @@ app.use((ctx, next) => {
 })
 
 router
+    .param('user', (id, ctx, next) => {
+        ctx.user = 4
+        console.log(ctx.user)
+        return next()
+    })
     .get('/', async(ctx, next) => {
         ctx.body = Boom.badGateway('that is a bad gateway')
     })
@@ -63,7 +68,8 @@ router
         console.log(`request ip ${ctx.ip}`)
         console.log(`request ips ${ctx.ips}`)
         console.log(`request subdomains ${ctx.subdomains}`)
-        ctx.body = 'modify user'
+        console.log(ctx.user)
+        ctx.body = 'modify user' + ctx.user
         await next()
     })
     .post('/users/:id', async(ctx, next) => {
