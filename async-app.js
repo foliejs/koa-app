@@ -1,4 +1,7 @@
 const Koa = require('koa')
+const router = require('koa-router')({
+    prefix: '/prefix'
+})
 const app = new Koa()
 
 // Koa 中间件以一种非常传统的方式级联起来，你可能会非常熟悉这种写法。
@@ -36,17 +39,60 @@ app.use((ctx, next) => {
     })
 })
 
+router
+    .get('/', async(ctx, next) => {
 
-app.use(ctx => {
-    console.log('4')
-    ctx.body = 'hello koa'
-})
+    })
+    .put('/users', async(ctx, next) => {
+        // total request parameters
+        console.log(`request parameter`)
+        console.log(ctx.params)
+        console.log(`request method ${ctx.method}`)
+        console.log(`request type ${ctx.type}`)
+        console.log(`request header ${ctx.header}`)
+        console.log(`request url ${ctx.url}`)
+        console.log(`request querystring ${ctx.querystring}`)
+        console.log(`request length ${ctx.length}`)
+        console.log(`request host ${ctx.host}`)
+        console.log(`request fresh ${ctx.fresh}`)
+        console.log(`request stale ${ctx.stale}`)
+        console.log(`request socket ${ctx.socket}`)
+        console.log(`request protocol ${ctx.protocol}`)
+        console.log(`request secure ${ctx.secure}`)
+        console.log(`request ip ${ctx.ip}`)
+        console.log(`request ips ${ctx.ips}`)
+        console.log(`request subdomains ${ctx.subdomains}`)
+        ctx.body = 'modify user'
+        await next()
+    })
+    .post('/users/:id', async(ctx, next) => {
+        await next()
+    })
+    .del('/users/:id', async(ctx, next) => {
+        await next()
+    })
+
+    // multiple middleware
+    .get(
+        '/users/:id',
+        async(ctx, next) => {
+            ctx.body = 'multiple user data'
+            await next()
+        },
+        async(ctx, next) => {
+            ctx.body = 'multiple user data twice'
+            console.log(ctx.body)
+        }
+    )
 
 
 app.on('error', (err, ctx) => {
     console.error('server error', err, ctx)
 })
 
-app.listen(3000, () => {
-    console.log(`async-app has listening on port 3000`)
-})
+app
+    .use(router.routes())
+    .use(router.allowedMethods())
+    .listen(3000, () => {
+        console.log(`async-app has listening on port 3000`)
+    })
