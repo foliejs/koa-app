@@ -85,6 +85,13 @@ router
         }
     )
 
+    // Router wildcard
+    // .get(/^\/app(.*)(?:\/|$)/, async(ctx, next) => {
+    //     ctx.body = 'wildcard regex body'
+    //     await next()
+    // })
+
+// route.use(session(), authorize())
 
 app.on('error', (err, ctx) => {
     console.error('server error', err, ctx)
